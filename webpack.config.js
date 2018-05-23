@@ -11,6 +11,7 @@ module.exports = {
     filename: 'dist/bundle.js',
     libraryTarget: 'var',
     library: 'mw',
-  }
+  },
+  node: {Buffer: false}
 
 }

@@ -9,10 +9,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async": "^2.6.0",
+    "bitcoinjs-lib": "^3.3.1",
     "bs58": "^4.0.1",
+    "coinselect": "^3.1.11",
     "elliptic": "^6.4.0",
+    "ethereum-tx-decoder": "^2.0.1",
+    "ethereumjs-tx": "^1.3.4",
+    "ethereumjs-util": "^5.2.0",
     "keccak": "^1.3.0",
     "pbkdf2": "^3.0.14",
+    "request": "^2.86.0",
     "scrypt-js": "^2.0.3",
     "webpack": "^3.6.0"
   }
