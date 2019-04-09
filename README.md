@@ -1,5 +1,7 @@
 ## MemWallet
 
+[Try memwallet now](https://dvdbng.github.io/memwallet)
+
 MemWallet is a deterministic cryptocurrency address generator, like [WrapWallet](https://keybase.io/warp/), but it works for Ethereum, Litecoin, Monero and Bitcoin. You never have to save or store your private key anywhere. Just pick a really good password - many random words, for example - and never use it for anything else.
 
 Given the same Passphrase and Salt, MemWallet will always generate the same address and private key, so if you only need to remember your password to access your funds.
