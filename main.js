@@ -39,7 +39,7 @@ function b58checkencode(version, buffer) {
 }
 
 function keyToBitcoinish(key, version) {
-  var pubkey = new Buffer(s256.keyFromPrivate(key).getPublic(false, 'hex'), 'hex');
+  var pubkey = Buffer.from(s256.keyFromPrivate(key).getPublic(false, 'hex'), 'hex');
   return {
     private: b58checkencode(version + 0x80, key),
     public: b58checkencode(version, ripemd160(sha256(pubkey))),
@@ -55,7 +55,7 @@ function keyToLitecoin(key) {
 }
 
 function keyToEthereum(key) {
-  var pubkey = new Buffer(s256.keyFromPrivate(key).getPublic(false, 'hex'), 'hex');
+  var pubkey = Buffer.from(s256.keyFromPrivate(key).getPublic(false, 'hex'), 'hex');
   return {
     private: key.toString('hex'),
     public: '0x' + keccak256(pubkey.slice(1)).slice(12).toString('hex')
@@ -69,10 +69,10 @@ function keyToMonero(seed) {
   // Hack
   var kp = ed25519.keyFromSecret()
   kp._privBytes = Array.from(private_spend);
-  var public_spend = new Buffer(kp.pubBytes());
+  var public_spend = Buffer.from(kp.pubBytes());
   var kp = ed25519.keyFromSecret()
   kp._privBytes = Array.from(private_view);
-  var public_view = new Buffer(kp.pubBytes());
+  var public_view = Buffer.from(kp.pubBytes());
 
 
   var address_buf = Buffer.concat([Buffer.alloc(1, 0x12), public_spend, public_view])
