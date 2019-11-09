@@ -207,7 +207,6 @@ func Raiblocks_public_to_address (pub ed25519.PublicKey) string {
 }
 
 
-
 func S256_priv_to_pub (priv [32]byte) [65]byte {
   var ret [65]byte
   x, y := S256.ScalarBaseMult(priv[:])
@@ -310,5 +309,68 @@ func Default_hash_pad_for_currency(currency string) int {
     return 7
   }
   return -1
+}
+
+func slice2arr(in []byte) [32]byte {
+  var out [32]byte;
+  copy(out[0:32], in)
+  return out
+}
+
+func Bitcoin_ish(name string, pkh byte, sh byte, wif byte, seed [32]byte, print_addr bool, print_priv bool, sign_msg string, sign_hash_buf []byte) {
+  pub_key_uncompressed := S256_priv_to_pub(seed)
+  pub_key_compressed := S256_priv_to_pub_compressed(seed)
+  addr_compressed := BTCish_public_to_address(pub_key_compressed[:], pkh)
+  addr_uncompressed := BTCish_public_to_address(pub_key_uncompressed[:], pkh)
+  if(print_addr) {
+    fmt.Printf("%s Address (Uncompressed): %s\n", name, addr_uncompressed)
+    fmt.Printf("%s Address (Compressed): %s\n", name, addr_compressed)
+    if (sh != 0) {
+      segwit_redeem_script := BTCish_public_to_segwit_redeem_script(pub_key_compressed)
+      fmt.Printf("Segwit P2SH Address: %s\n", BTC_redeem_script_to_address(segwit_redeem_script, 5))
+      fmt.Printf("Segwit Redeem Script (Uncompressed): %x\n", segwit_redeem_script)
+    }
+    fmt.Printf("Pub Key (Uncompressed): %x\n", pub_key_uncompressed)
+    fmt.Printf("Pub Key (Compressed): %x\n", pub_key_compressed)
+  }
+  if(print_priv) { fmt.Printf("Private Key (Uncompressed): %s\n", BTCish_private_to_WIF(seed, wif)) }
+  if(print_priv) { fmt.Printf("Private Key (Compressed): %s\n", BTCish_private_to_WIF_compressed(seed, wif)) }
+  if(sign_msg != "") {
+    signature := BTC_sign_msg([]byte(sign_msg), seed)
+    fmt.Printf("Signature: %s\n", signature)
+    fmt.Printf("-----BEGIN BITCOIN SIGNED MESSAGE-----\n%s\n-----BEGIN SIGNATURE-----\n%s\n%s\n-----END BITCOIN SIGNED MESSAGE-----\n", sign_msg, addr_uncompressed, signature)
+  }
+  if(sign_hash_buf != nil) {
+    signature := BTC_sign_hash(slice2arr(sign_hash_buf), seed)
+    fmt.Printf("Signature: %x\n", signature)
+  }
+}
+
+func Raiblocks(seed [32]byte, print_addr bool, print_priv bool, sign_msg string, sign_hash_buf []byte) {
+  pub_key := Raiblocks_priv_to_pub(seed)
+  addr := Raiblocks_public_to_address(pub_key)
+  if(print_addr) {
+    fmt.Printf("Raiblocks Address (Uncompressed): %s\n", addr)
+    fmt.Printf("Pub Key (Uncompressed): %x\n", pub_key)
+  }
+  if(print_priv) { fmt.Printf("Private Key: %x\n", seed) }
+  if(sign_hash_buf != nil) {
+    signature := ed25519.Sign(Raiblocks_seed_to_priv(seed), sign_hash_buf)
+    fmt.Printf("Signature: %x\n", signature)
+  }
+}
+
+func Ethereum(seed [32]byte, print_addr bool, print_priv bool, sign_msg string, sign_hash_buf []byte) {
+  pub_key := S256_priv_to_pub(seed)
+  addr := Ethereum_public_to_address(pub_key)
+  if(print_addr) {
+    fmt.Printf("Ethereum Address (Uncompressed): %s\n", addr)
+    fmt.Printf("Pub Key (Uncompressed): %x\n", pub_key)
+  }
+  if(print_priv) { fmt.Printf("Private Key: %x\n", seed) }
+  if(sign_hash_buf != nil) {
+    signature := BTC_sign_hash(slice2arr(sign_hash_buf), seed)
+    fmt.Printf("Signature: %x\n", signature)
+  }
 }
 
